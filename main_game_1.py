@@ -23,6 +23,7 @@ running = True
 falling = True
 
 
+
 character_position = [100,500]
 character_radius = 15
 character_facing = "right"
@@ -56,20 +57,33 @@ def draw_level(levels, current_level):
     for boundary in levels[current_level]:
         pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(boundary.x, boundary.y, boundary.width, boundary.height))
            
+def side_walls(character_position, character_radius):
+    if character_position[0] + 50 + character_radius >= screen_width:
+        character_position[0] = screen_width - character_radius
 
 
+
+        
 def accelleration(character_facing, character, character_position, character_radius):
-    accelleration = 10
+    jump = True
+    accelleration = 20
     side = 50
-    while accelleration > 0:
+    while accelleration > 0 :
             character_position[1] -= accelleration//1.5
             accelleration=  accelleration//1.5
             if character_facing == "left":
-                character_position[0] -= side//1.5
-                side = side//1.5
+                if character_position[0] <50:
+                    side = character_position[0] 
+                if accelleration >-20:
+                    character_position[1] -= (accelleration*accelleration)*0.5
+                    character_position[0] -= side//40
             elif character_facing == "right":
-                character_position[0] += side//1.5
-                side = side//1.5
+                if character_position[0] > 550:
+                    side = 600-character_position[0] 
+                if accelleration >-20:
+                    character_position[0] -= (accelleration*accelleration)*0.5
+                    character_position[0] += side//40
+
             time.sleep(0.05)
             background()
             character = Block(character_position, character_radius)
@@ -86,7 +100,7 @@ def touching_vertically(character_position, character_radius, boundary, falling)
 
 level1 = [
 boundary(0,580,600,20),
-boundary(100,500,20,60),
+
 ]
 
 
@@ -96,6 +110,7 @@ levels = [level1]
 
 
 while running:
+    
     # Fill the background with white
     character = Block(character_position, character_radius)
     background()
