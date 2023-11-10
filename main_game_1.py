@@ -62,28 +62,36 @@ def side_walls(character_position, character_radius):
         character_position[0] = screen_width - character_radius
 
 
-
+def hitting_side(character_position, character_radius, character_facing):
+    if character_position[0]-character_radius<=0:
+       character_facing = "right"
+    if character_position[0] + character_radius >= screen_width:
+        character_facing = "left"
+    return character_facing
         
 def accelleration(character_facing, character, character_position, character_radius, falling):
     jump = True
     accelleration = 20
-    side = 50
+    side = 100
     jump_velocity = 20
-    gravity = 1 
+    gravity = 1
+    print(character_position) 
     while falling:
         character_position[1] -= jump_velocity
         jump_velocity -= gravity
         if character_position[1] <= 0:
             falling = False
-        if character_facing == "left":
+        if character_facing == "left":            
             character_position[0] -= side//20
         if character_facing == "right":
             character_position[0] += side//20
+        character_facing = hitting_side(character_position, character_radius, character_facing)
         time.sleep(0.05)
         background()
-        print(character_position)
+        
         character = Block(character_position, character_radius)
         falling = touching_vertically(character_position, character_radius, level1, falling)
+        
 
 
 def touching_vertically(character_position, character_radius, boundary, falling):
