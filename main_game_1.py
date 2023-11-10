@@ -69,9 +69,7 @@ def hitting_side(character_position, character_radius, character_facing):
         character_facing = "left"
     return character_facing
         
-def accelleration(character_facing, character, character_position, character_radius, falling):
-    jump = True
-    accelleration = 20
+def accelleration(character_facing, character, character_position, character_radius, falling, levels):
     side = 100
     jump_velocity = 20
     gravity = 1
@@ -85,14 +83,31 @@ def accelleration(character_facing, character, character_position, character_rad
             character_position[0] -= side//20
         if character_facing == "right":
             character_position[0] += side//20
+        
+        character_facing = hitting_horizontally(character_position, character_radius, levels, character_facing)
         character_facing = hitting_side(character_position, character_radius, character_facing)
+        print(character_position[0], character_facing)
         time.sleep(0.05)
         background()
         
         character = Block(character_position, character_radius)
-        falling = touching_vertically(character_position, character_radius, level1, falling)
         
-
+        
+def hitting_horizontally(character_position, character_radius, boundary, character_facing):
+    for boundary in levels[current_level]:
+        if character_position[1] + character_radius*2 >= boundary.y and character_position[1] <= boundary.y + boundary.height \
+            and character_position[0] >= boundary.x and character_position[0] <= boundary.x + boundary.width \
+            and character_facing == "right":
+            print("work")
+            character_facing = "left"
+            
+        if character_position[1] + character_radius*2 >= boundary.y and character_position[1] <= boundary.y + boundary.height \
+            and character_position[0] >= boundary.x and character_position[0] <= boundary.x + boundary.width \
+            and character_facing == "left":
+            print("work")
+            character_facing = "right"
+        print(character_facing)
+        return character_facing
 
 def touching_vertically(character_position, character_radius, boundary, falling):
     for boundary in levels[current_level]:
@@ -109,6 +124,7 @@ def touching_vertically(character_position, character_radius, boundary, falling)
 
 level1 = [
 boundary(0,580,600,20),
+boundary(200,200,400,400),
 
 ]
 
@@ -134,11 +150,11 @@ while running:
 
     if keyboard.is_pressed('left'):
         falling = True
-        accelleration("left",character, character_position, character_radius, falling)
+        accelleration("left",character, character_position, character_radius, falling, levels[current_level])
     if keyboard.is_pressed('right'):
         falling = True
-        accelleration("right",character, character_position, character_radius, falling)
-    falling = touching_vertically(character_position, character_radius, level1, falling)
+        accelleration("right",character, character_position, character_radius, falling, levels[current_level])
+    falling = touching_vertically(character_position, character_radius, levels[current_level], falling)
     if falling == True and character_position[1] < screen_height - character_radius:
         character_position[1] += 10
 
