@@ -68,22 +68,34 @@ def accelleration(character_facing, character, character_position, character_rad
     jump = True
     accelleration = 20
     side = 50
-    while accelleration > 0 :
-            
+    jump_velocity = 20
+    gravity = 1 
+    while falling:
+        character_position[1] -= jump_velocity
+        jump_velocity -= gravity
+        if character_position[1] <= 0:
+            falling = False
+        if character_facing == "left":
+            character_position[0] -= side//20
+        if character_facing == "right":
+            character_position[0] += side//20
+        time.sleep(0.05)
+        background()
+        print(character_position)
+        character = Block(character_position, character_radius)
+        falling = touching_vertically(character_position, character_radius, level1, falling)
 
-            time.sleep(0.05)
-            background()
-            character = Block(character_position, character_radius)
 
 def touching_vertically(character_position, character_radius, boundary, falling):
     for boundary in levels[current_level]:
         if character_position[1] + character_radius*2 >= boundary.y and character_position[1] <= boundary.y + boundary.height \
             and character_position[0] >= boundary.x and character_position[0] <= boundary.x + boundary.width \
             and falling:
-            character_position[1] = boundary.y - character_radius*2 + 1
-            falling = False
+            character_position[1] = boundary.y - character_radius
             print(character_position[1],falling)
-            return falling
+            falling = False
+    return falling
+            
             
 
 
@@ -99,7 +111,6 @@ levels = [level1]
 
 
 while running:
-    print(falling)
     # Fill the background with white
     character = Block(character_position, character_radius)
     background()
@@ -119,10 +130,7 @@ while running:
     if keyboard.is_pressed('right'):
         falling = True
         accelleration("right",character, character_position, character_radius, falling)
-
-    print(falling)
-    touching_vertically(character_position, character_radius, level1, falling)
-    print(falling)
+    falling = touching_vertically(character_position, character_radius, level1, falling)
     if falling == True and character_position[1] < screen_height - character_radius:
         character_position[1] += 10
 
