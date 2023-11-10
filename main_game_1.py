@@ -64,25 +64,12 @@ def side_walls(character_position, character_radius):
 
 
         
-def accelleration(character_facing, character, character_position, character_radius):
+def accelleration(character_facing, character, character_position, character_radius, falling):
     jump = True
     accelleration = 20
     side = 50
     while accelleration > 0 :
-            character_position[1] -= accelleration//1.5
-            accelleration=  accelleration//1.5
-            if character_facing == "left":
-                if character_position[0] <50:
-                    side = character_position[0] 
-                if accelleration >-20:
-                    character_position[1] -= (accelleration*accelleration)*0.5
-                    character_position[0] -= side//40
-            elif character_facing == "right":
-                if character_position[0] > 550:
-                    side = 600-character_position[0] 
-                if accelleration >-20:
-                    character_position[0] -= (accelleration*accelleration)*0.5
-                    character_position[0] += side//40
+            
 
             time.sleep(0.05)
             background()
@@ -92,10 +79,12 @@ def touching_vertically(character_position, character_radius, boundary, falling)
     for boundary in levels[current_level]:
         if character_position[1] + character_radius*2 >= boundary.y and character_position[1] <= boundary.y + boundary.height \
             and character_position[0] >= boundary.x and character_position[0] <= boundary.x + boundary.width \
-            and falling == True:
-            character_position[1] = boundary.y - character_radius*2
-            print("touching boundary")
+            and falling:
+            character_position[1] = boundary.y - character_radius*2 + 1
             falling = False
+            print(character_position[1],falling)
+            return falling
+            
 
 
 level1 = [
@@ -110,7 +99,7 @@ levels = [level1]
 
 
 while running:
-    
+    print(falling)
     # Fill the background with white
     character = Block(character_position, character_radius)
     background()
@@ -126,15 +115,15 @@ while running:
 
     if keyboard.is_pressed('left'):
         falling = True
-        accelleration("left",character, character_position, character_radius)
+        accelleration("left",character, character_position, character_radius, falling)
     if keyboard.is_pressed('right'):
         falling = True
-        accelleration("right",character, character_position, character_radius)
+        accelleration("right",character, character_position, character_radius, falling)
+
+    print(falling)
     touching_vertically(character_position, character_radius, level1, falling)
+    print(falling)
     if falling == True and character_position[1] < screen_height - character_radius:
         character_position[1] += 10
-
-        
-    
 
     pygame.display.update() 
